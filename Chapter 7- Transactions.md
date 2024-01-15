@@ -1,4 +1,4 @@
-# Designing-Data-Intensive-Applications-Summary
+# Designing Data-Intensive-Applications-Summary
 ## Chapter 7 Transactions
 
 ## Weak Isolation Levels
