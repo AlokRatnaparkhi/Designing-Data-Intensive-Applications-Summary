@@ -1,7 +1,7 @@
 # Designing-Data-Intensive-Applications-Summary
-Chapter 7 Transactions
+#Chapter 7 Transactions
 
-Weak Isolation Levels
+#Weak Isolation Levels
 
 1. Read Committed (No dirty reads and no dirty writes)
   - Implemented in most of the databases
