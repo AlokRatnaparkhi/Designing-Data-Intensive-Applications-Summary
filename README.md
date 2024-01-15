@@ -1,9 +1,9 @@
 # Designing-Data-Intensive-Applications-Summary
-#Chapter 7 Transactions
+## Chapter 7 Transactions
 
-#Weak Isolation Levels
+## Weak Isolation Levels
 
-1. Read Committed (No dirty reads and no dirty writes)
+### 1. Read Committed (No dirty reads and no dirty writes)
   - Implemented in most of the databases
   - Implemented in PostgreSQL, SQL server 2012, Oracle and MemSQL as default setting
   - Dirty writes are prevented using locks
