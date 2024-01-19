@@ -16,7 +16,7 @@
 
 ##Lost Updates
   
-Lost updates occur when two transaction read - modify -write (cycle) concurrently. It may happen that second transaction which finishes last does not include modification done by first transaction and overwrites it. 
+Lost updates occur when two transaction read - modify -write data (cycle) concurrently. It may happen that second transaction which finishes last does not include modification done by first transaction and overwrites it. 
 
 How to prevent?
 
