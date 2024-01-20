@@ -11,7 +11,7 @@
     transaction asks for read, old value is presented till other transaction does not commit new value.
 
 ### 1. Snapshot Isolation aka Repeatable read / (serialzable  in oracle)
-Main priblem - READ SKEW / NON REPEATABLE READ
+Main problem - READ SKEW / NON REPEATABLE READ
 - Non-repeatable read(fuzzy read) is that a transaction reads the same row at least twice but the same row's data is different between the 1st and 2nd reads because other transactions update the same row's data and commit at the same time(concurrently).
 - Read skew is that with two different queries, a transaction reads inconsistent data because between the 1st and 2nd queries, other transactions insert, update or delete data and commit. Finally, an inconsistent result is produced by the inconsistent data.
   In summary, non-repeatable read is specifically about the inconsistency of a single read operation (reading same object twice) when the data is modified by another transaction between consecutive reads. On the other hand, read skew is a broader concept or generalization of NRR that involves inconsistencies in multiple reads (same object rows or different rows) within a transaction, especially when the transaction is making decisions based on those reads.
@@ -19,7 +19,8 @@ Main priblem - READ SKEW / NON REPEATABLE READ
   Solution?
 
   Snapshot isolation - each transaction reads from a consistent snapshot of database
-  Used in - backups and analytics
+
+   Used in - backups and analytics
   - prevent dirty writes using locks (one write locks the object so that no other writes are performed at same time)
   - reader never blocks writer, writer never blocks readers
   - tag data which is written to DB using always increasing transaction ID
@@ -38,13 +39,13 @@ Lost updates occur when two transaction read - modify -write data (cycle) concur
 
 How to prevent?
 
-1. Atomic Operations:
+- Atomic Operations:
     
     - Most of the databases support atomic operation that takes up a lock while reading and updating the object and does not release the lock until the object is updated. Any subsequent transactions will have to wait until first transaction finishes its operations. Example of atomic operation,
    UPDATE USERS SET USERNAME = 'Batman' WHERE USER_ID = 10  (This is considered as atomic operation by database. It will lock the row number 10 till update is not completed hence preventing any subsequent statments to read the value.
    - Also, known as Cursor stability
 
-3. Explicit Locking:
+- Explicit Locking:
 
    Sometimes single atomic operation is not possible cause we have to implement multiple statements as part of transactions. So, explicitly lock the rows which you want to modify using SQL statement as supported by databases.
    E.g. BEGIN TRANSACTION;
@@ -52,15 +53,15 @@ How to prevent?
      UPDATE USERS SET STATE = 'MH' WHERE CITY IN ('AURANGABAD', 'PUNE', 'KOLKATA', 'HYDERABAD')
    COMMIT;
    - Downside ? -> Explicit locking can lead to race condition
-
-5. Automatic Lost Update Detection
+     
+- Automatic Lost Update Detection
    
     - Let transaction manager of database automatically detects the lost updates. Keep retrying the transaction which are lost updates.
     - But how?. Can be easily identified using snapshot isolation (we know that which data is stale using snapshots / versions of row)
     - Implemented in Postgres and MS SQL to detect lost updates
     -  Does not require application code, SQL statement or explicit locking so less error prone
     
-7. Compare and Set
+- Compare and Set
    
   - Only allow update if the value is not changed after your last read. If it is modified then retry.
   - can be easily implemented using SQL statements e.g.
@@ -69,7 +70,7 @@ How to prevent?
 
 2.  Write Skew
    - Generalization of lost update problem
-   - two transactions read from same objects at the same time, based on the information provided by the reads, they update same or different objects. If it is same object then you can get dirty write or lost update anamoly. But, if objects are different then it may lead to write skew anamoly.
+   - two transactions read from same objects at the same time, based on the information provided by the reads, they update same or different objects. If it is same object then you can get dirty write or lost update anomoly. But, if objects are different then it may lead to write skew anomoly.
    - Famous example, 2 doctors must be in hospital for a shift. Among three doctors, two update the shift record at the same time. At the time of read both read that 2 doctors are available at hospital. Both update their respective status objects to unavailable based on information from first query but clearly system should not allow it.
 - Can not be solved using atomic operations, automatic detection
 - Can be solved by either using Serializable isolation level or using explicit lock (FOR UPDATE while firing select queries) 
