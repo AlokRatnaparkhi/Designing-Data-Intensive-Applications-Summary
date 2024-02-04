@@ -73,4 +73,39 @@ How to prevent?
    - two transactions read from same objects at the same time, based on the information provided by the reads, they update same or different objects. If it is same object then you can get dirty write or lost update anomoly. But, if objects are different then it may lead to write skew anomoly.
    - Famous example, 2 doctors must be in hospital for a shift. Among three doctors, two update the shift record at the same time. At the time of read both read that 2 doctors are available at hospital. Both update their respective status objects to unavailable based on information from first query but clearly system should not allow it.
 - Can not be solved using atomic operations, automatic detection
-- Can be solved by either using Serializable isolation level or using explicit lock (FOR UPDATE while firing select queries) 
+- Can be solved by either using Serializable isolation level or using explicit lock (FOR UPDATE while firing select queries)
+
+## Serializable isolation level & 2PL
+- Serializable isolation level guarantees that even multiple transactions are executed concurrently, they will be executed as if they are executed serially by the database.
+
+- It is the strictest of all isolation levels.
+
+##How to implement?
+- Literally execute transactions serially. (E.g., executing all transactions using single execution thread)
+pros : No concurrency problem
+cons: Low throughput, worst performance
+- Using 2PL (two phase locking) — most popular
+- Optimistic concurrency control techniques (Serializable snapshot isolation)
+
+##Two Phase Locking
+1. There are two kinds of locks for all transactions
+    - Shared locks
+    - Exclusive locks
+2. Locks are acquired at the beginning of transaction and released at the end of transactions. Due to these two phases, it is called as two phase locking (2PL).
+
+3. Both readers and writers acquire locks. Writers block both readers and writers. Readers block the writers.
+
+4. If transaction wants to read, it acquire shared lock if there is no other transaction hold exclusive lock on it. Multiple readers can share reader locks. Writer can not acquire exclusive lock on object until readers finishes the read (i.e., as long as there are any shared or exclusive lock on object).
+
+6. If transaction wants to write to object, it checks whether there are any shared or exclusive on object, if not it acquires it. Other transactions (both readers and writers) should wait until this transaction releases a lock on object.
+
+pros:
+  - Ensure serializability
+  protects from concurrency issues like write skey/ phantoms which are not possible by other isolation levels ( Using Predicate locks & Index Range locks)
+  - Ensure better read performance than executing all transactions serially
+
+cons:
+  - still, poor performance but better than first soltion
+  - low throughput
+  - too many locks
+  - Is susceptible to deadlock due to locks
